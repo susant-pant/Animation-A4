@@ -182,7 +182,7 @@ void initGL()
 
 	glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
 
-	glClearColor(0.f, 0.f, 0.f, 0.f);		//Color to clear the screen with (R, G, B, Alpha)
+	glClearColor(0.1f, 0.2f, 0.2f, 1.f);		//Color to clear the screen with (R, G, B, Alpha)
 }
 
 bool loadUniforms(Camera* cam, GLuint program, mat4 perspective, mat4 modelview)
@@ -302,7 +302,7 @@ int main(int argc, char *argv[]) {
 
 	vector<Boid> boids;
 
-	int numBoids = 50;
+	int numBoids = 250;
 	initBoids(numBoids, boids);
 
 	cam = Camera(vec3(0, 0, -1), vec3(0, 1.f, 50.f));
@@ -332,43 +332,62 @@ int main(int argc, char *argv[]) {
 		render(vaoBoids, 0, vertices.size());
 
 		vec3 velocityMatch;
-		vec3 collisionAvoidance = vec3(0);
+		vec3 collisionAvoidance;
 		vec3 flockCentering = vec3(0);
 
 		for(uint i = 0; i < boids.size(); i++){
 
-			vec3 matchVel = vec3(0.f);
-			int matchCounter = 0;
-
-			vec3 avoidVel = vec3(0.f);
-			int avoidCounter = 0;
+			vec3 matchVel = boids[i].velocity;
+			int matchCounter = 1;
 
 			for(uint j = 0; j < boids.size(); j++){
 				if (i == j) continue;
 
 				bool isVisible = (boids[i].inLineOfSight(boids[j]) && boids[i].inVisibleRange(boids[j]));
 
-				if (isVisible) {
-					if (boids[i].inFlockRange(boids[j])) {
-						matchVel += boids[j].velocity;
-						matchCounter++;
-					} else { /*visible but not in flock*/ }
+				if (isVisible && boids[i].inFlockRange(boids[j])) {
+					matchVel += boids[j].velocity;
+					matchCounter++;
 				}
+			}
 
-				float boidDist = boids[i].distanceTo(boids[j]);
+			if (matchCounter == 1) {
+				matchVel = boids[i].velocity;
 
-				if (boidDist < 0.1f) {
-					avoidVel += (0.1f/boidDist) * normalize(vec3(float((rand() % 20) - 10), float((rand() % 20) - 10), float((rand() % 20) - 10)));
-					avoidCounter++;
+				for(uint j = 0; j < boids.size(); j++){
+					if (i == j) continue;
+
+					float boidDist = boids[i].distanceTo(boids[j]);
+					bool isVisible = (boids[i].inLineOfSight(boids[j]) && boids[i].inVisibleRange(boids[j]));
+
+					if (isVisible && !boids[i].inFlockRange(boids[j])) {
+						matchVel = normalize(boids[j].pos - boids[i].pos) * 2.f;
+						break;
+					}
+				}
+			}
+
+			velocityMatch = matchVel/float(matchCounter);
+
+			vec3 avoidVel = boids[i].velocity;
+
+			for(uint j = 0; j < boids.size(); j++){
+				if (i == j) continue;
+
+				float collisionDist = 2.f;
+				vec3 boid1Pos = boids[i].pos + boids[i].velocity;
+				vec3 boid2Pos = boids[j].pos + boids[j].velocity;
+
+				float boidDist = length(boid2Pos - boid1Pos);
+				if (boidDist < collisionDist) {
+					avoidVel += vec3(float((rand() % 7) - 3) / 100.f, float((rand() % 7) - 3) / 100.f, float((rand() % 7) - 3) / 100.f);
 				}
 
 			}
-			
-			if (matchCounter != 0) velocityMatch = normalize(matchVel/float(matchCounter));
-			if (avoidCounter != 0) collisionAvoidance = normalize(avoidVel/float(avoidCounter));
+			collisionAvoidance = normalize(avoidVel);
 
-			vec3 finalVelocity = (velocityMatch + collisionAvoidance + flockCentering) / 3.f;
-			boids[i].setVelocity(normalize(boids[i].velocity + finalVelocity));
+			vec3 finalVelocity = normalize((velocityMatch + collisionAvoidance + flockCentering) / 3.f);
+			boids[i].setVelocity((velocityMatch + collisionAvoidance) / 2.f);
 			boids[i].updatePos();
 		}
 

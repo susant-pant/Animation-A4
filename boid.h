@@ -8,7 +8,7 @@ public:
 	vec3 velocity;
 	float FOV = 160.f;
 	float visibleRange = 9.f; 	//distance at which other Boids are visible
-	float flockRange = 1.5f;	//distance at which a Boid considers its neighbours to be part of the same Flock
+	float flockRange = 3.f;	//distance at which a Boid considers its neighbours to be part of the same Flock
 
 	Boid(){
 		pos = vec3(float((rand() % 20) - 10), float((rand() % 20) - 10), float((rand() % 20) - 10));

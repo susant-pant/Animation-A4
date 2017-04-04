@@ -15,7 +15,7 @@ bool Boid::inLineOfSight(Boid otherBoid){
 }
 
 float Boid::distanceTo(Boid otherBoid){
-	return length(vec3(pos - otherBoid.pos));
+	return length(vec3(otherBoid.pos - pos));
 }
 
 bool Boid::inVisibleRange(Boid otherBoid){
@@ -32,14 +32,14 @@ void Boid::setVelocity(vec3 newVel){
 
 void Boid::updatePos(){
 	vec3 newPos = pos + velocity;
-	if (!(newPos.x < 20.f && newPos.x > -20.f)){
+	if (!(newPos.x < 25.f && newPos.x > -25.f)){
 		velocity.x = -velocity.x;
 	}
-	if (!(newPos.y < 20.f && newPos.y > -20.f)){
+	if (!(newPos.y < 25.f && newPos.y > -25.f)){
 		velocity.y = -velocity.y;
 	}
-	if (!(newPos.z < 20.f && newPos.z > -20.f)){
+	if (!(newPos.z < 25.f && newPos.z > -25.f)){
 		velocity.z = -velocity.z;
 	}
-	pos += velocity/10.f;
+	pos += velocity/6.f;
 }
