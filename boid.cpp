@@ -32,14 +32,8 @@ void Boid::setVelocity(vec3 newVel){
 
 void Boid::updatePos(){
 	vec3 newPos = pos + velocity;
-	if (!(newPos.x < 25.f && newPos.x > -25.f)){
-		velocity.x = -velocity.x;
-	}
-	if (!(newPos.y < 25.f && newPos.y > -25.f)){
-		velocity.y = -velocity.y;
-	}
-	if (!(newPos.z < 25.f && newPos.z > -25.f)){
-		velocity.z = -velocity.z;
+	if (!(length(newPos) <= 50.f)) {
+		velocity = -velocity;
 	}
 	pos += velocity/6.f;
 }
