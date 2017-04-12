@@ -17,6 +17,7 @@
 #include <algorithm>
 #include <vector>
 #include <cstdlib>
+#include <time.h>
 
 #include "glm/glm.hpp"
 #include "glm/gtc/matrix_transform.hpp"
@@ -303,6 +304,7 @@ int main(int argc, char *argv[]) {
 	vector<Boid> boids;
 
 	int numBoids = 250;
+	srand(time(0));
 	initBoids(numBoids, boids);
 
 	cam = Camera(vec3(0, 0, -1), vec3(0, 1.f, 50.f));
@@ -333,7 +335,8 @@ int main(int argc, char *argv[]) {
 
 		vec3 velocityMatch;
 		vec3 collisionAvoidance;
-		vec3 flockCentering = vec3(0);
+		//vec3 flockCentering = vec3(0);
+		// Didn't get to do flock centering
 
 		for(uint i = 0; i < boids.size(); i++){
 
@@ -361,7 +364,7 @@ int main(int argc, char *argv[]) {
 					bool isVisible = (boids[i].inLineOfSight(boids[j]) && boids[i].inVisibleRange(boids[j]));
 
 					if (isVisible && !boids[i].inFlockRange(boids[j])) {
-						matchVel = normalize(boids[j].pos - boids[i].pos) * 2.f;
+						matchVel = normalize(boids[j].pos - boids[i].pos) * boidDist;
 						break;
 					}
 				}
@@ -386,7 +389,7 @@ int main(int argc, char *argv[]) {
 			}
 			collisionAvoidance = normalize(avoidVel);
 
-			vec3 finalVelocity = normalize((velocityMatch + collisionAvoidance + flockCentering) / 3.f);
+			//vec3 finalVelocity = normalize((velocityMatch + collisionAvoidance + flockCentering) / 3.f);
 			boids[i].setVelocity((velocityMatch + collisionAvoidance) / 2.f);
 			boids[i].updatePos();
 		}

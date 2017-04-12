@@ -1,18 +1,25 @@
-# Animation-A3
+# Animation-A4
 Animating mass-spring systems
 
 # Controls
-W : Go to the next scene
-S : Go to the previous scene
+W , S , A , D : Move Camera position
+Mouse: Change Camera direction
 
 # Collaborators
 None
 
-# Code Sources
-Jeremy''s OpenGL Boilerplate Code
+# Sources
+Code : Jeremy''s OpenGL Boilerplate Code
+Original Paper : http://www.cs.toronto.edu/~dt/siggraph97-course/cwr87/
 
 # To Run
 Run command 'make && ./test.o' in terminal, in directory containing makefile
 
 # Notes
-There's an invisible floor in all of the scenes; if it looks like one of the masses bounced randomly while swinging low in the second scene, that would be why.
+I didn't have the time to implement Flock Centering or Collisions or anything really exciting, so unfortunately it's not a very exciting simulation.
+
+Also I directly change the velocity of the boids instead of changing it using an acceleration value, so this causes the boids to look like they are constantly twitching.
+
+The boids get bluer as they go farther out, and whiter as they come closer towards the camera.
+
+There's a big spherical boundary that the boids 'bounce' away from when they get to close. Since I do this by directly changing velocity, the boids look pretty crazy when they start flocking near the edge of the sphere.
