@@ -1,5 +1,5 @@
 # Animation-A4
-Animating mass-spring systems
+Reynolds' model of flocks, herds and schools
 
 # Controls
 W , S , A , D : Move Camera position
